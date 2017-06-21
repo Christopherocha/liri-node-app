@@ -3,20 +3,53 @@ var keys = require('./keys.js');
 var inquirer = require('inquirer');
 var Twitter = require('twitter');
 var request = require('request');
+var Spotify = require('node-spotify-api');  
 var fs = require('fs');
+
 var userChoice;
 
 var callLookup = {
     tweet: function(){
+        // var twitter = new Twitter({
+        //     consumer_key = keys.twitterKeys.consumer_key,
+        //     consumer_secret = keys.twitterKeys.consumer_secret,
+        //     access_token_key = keys.twitterKeys.access_token_key,
+        //     access_token_secret = keys.twitterKeys.access_token_secret
+        // })
+
+        //twitter.get()
 
     },
-    spotify: function(){
-        var Spotify = require('node-spotify-api');
+    spotifyCall: function(song){
+        console.log("made it this far")
         var spotify = new Spotify({
             id: "f1a47bc7d2df4f31bca270d373a48660",
             secret: "7e1f4db8abe54e378acb24ecc09b4296"
         });
 
+        spotify
+            .search({type: 'track', query: song})
+            .then(function(response){
+                var artist;
+
+                for (var i = 0; i < response.tracks.items[0].artists.length; i++){
+                    if(i > 0){
+                        artist += ", " + response.tracks.items[0].artists[i].name;
+                    } else {
+                        artist = "Artist(s): " + response.tracks.items[0].artists[i].name;
+                    }
+                }
+                console.log("==============================")
+                console.log(artist);
+                console.log("Song Title: " + response.tracks.items[0].name);
+                console.log("Preview URL: " + response.tracks.items[0].preview_url);
+                console.log("Album: " + response.tracks.items[0].album.name);
+                console.log("==============================")
+
+            })
+            .catch(function(err){
+                console.log(err)
+            })
     },
     movie: function(mov){
         request(userChoice,function(err, response, body){
@@ -25,31 +58,63 @@ var callLookup = {
 
     },
     doWhatItSays: function(){
-        fs.readFile('random.txt', function(err, data){
+        fs.readFile('random.txt', 'utf8', function(err, data){
 
             if(err){
                 console.log(err);
             }
-
-            var text = data.split(",");
-
-            switch(text[0]){
-                case "spotify-this-song":
-                    callLookup.spotify(text[1]);
-                    
-            }
-
-        })
+            var text = [];
+            text = data.split(",");
+            console.log(data)
+            //switch(text[0]){
+            //     case "spotify-this-song":
+            //         //callLookup.spotify(text[1]);
+            //         console.log(text[0], text[1]);
+            // }
+            })
     }
 }
 
+
 inquirer.prompt({
     type: "list",
+    // type: "input",
     message: "What would you like to do?",
     choices: ["Retrieve your tweets?","See song information?", "See movie information?", "Or, whatever?" ],
     name: "choice"
 
 }).then(function(user){
-    console.log(user.choice);
+    switch(user.choice){
+        case "Retrieve your tweets?":
+            //callLookup.tweet();
+            break;
+        case "See song information?":
+            inquirer.prompt({
+                type: "input",
+                message: "What song do you want to lookup?",
+                name: "song"
+            }).then(function(choice){
+                console.log("spotify-this-song " + choice.song)
+                console.log("Running lookup on " + choice.song);
+                console.log("...........................")
+                callLookup.spotifyCall(choice.song);
+            })
+            break;
+        case "See movie information?":
+            inquirer.prompt({
+                type: "input",
+                message: "What movie do you want to lookup?",
+                name: "movie"
+            }).then(function(choice){
+                console.log(choice.movie);
+                //callLookup.movie(choice.movie);
+            })
+            break;
+        case "Or, whatever?":
+            callLookup.doWhatItSays();
+            break;
+        default:
+            break;
+    }
 })
 
