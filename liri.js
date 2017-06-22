@@ -1,4 +1,3 @@
-"use strict";
 var keys = require('./keys.js');
 var inquirer = require('inquirer');
 var Twitter = require('twitter');
@@ -6,22 +5,33 @@ var request = require('request');
 var Spotify = require('node-spotify-api');  
 var fs = require('fs');
 
-var userChoice;
-
 var callLookup = {
     tweet: function(){
-        // var twitter = new Twitter({
-        //     consumer_key = keys.twitterKeys.consumer_key,
-        //     consumer_secret = keys.twitterKeys.consumer_secret,
-        //     access_token_key = keys.twitterKeys.access_token_key,
-        //     access_token_secret = keys.twitterKeys.access_token_secret
-        // })
+        var client = new Twitter({
+            consumer_key: keys.twitterKeys.consumer_key,
+            consumer_secret: keys.twitterKeys.consumer_secret,
+            access_token_key: keys.twitterKeys.access_token_key,
+            access_token_secret: keys.twitterKeys.access_token_secret 
+        })
 
-        //twitter.get()
+        client.get('search/tweets.json?q=from%3AcodeChrisApp&result_type=recent&count=20', function(err, tweets, response){
+            if(err) throw err;
+            
+            console.log("Here are the last " + tweets.statuses.length + " tweets")
+            console.log("===================================")
+            for(var i = 0; i < tweets.statuses.length; i++){
+
+                //var parseVal = ;
+                
+                var date = new Date(JSON.stringify(tweets.statuses[i].created_at));
+                console.log("Tweet: " + tweets.statuses[i].text)
+                console.log("Tweeted at: " + date);
+                console.log("===================================")
+            }
+        })
 
     },
     spotifyCall: function(song){
-        console.log("made it this far")
         var spotify = new Spotify({
             id: "f1a47bc7d2df4f31bca270d373a48660",
             secret: "7e1f4db8abe54e378acb24ecc09b4296"
@@ -86,7 +96,7 @@ inquirer.prompt({
 }).then(function(user){
     switch(user.choice){
         case "Retrieve your tweets?":
-            //callLookup.tweet();
+            callLookup.tweet();
             break;
         case "See song information?":
             inquirer.prompt({
@@ -94,9 +104,8 @@ inquirer.prompt({
                 message: "What song do you want to lookup?",
                 name: "song"
             }).then(function(choice){
-                console.log("spotify-this-song " + choice.song)
-                console.log("Running lookup on " + choice.song);
-                console.log("...........................")
+                console.log("spotify-this-song \"" + choice.song + "\"")
+                console.log("Running lookup on \"" + choice.song + "\"");
                 callLookup.spotifyCall(choice.song);
             })
             break;
