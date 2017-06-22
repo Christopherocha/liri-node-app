@@ -62,8 +62,13 @@ var callLookup = {
             })
     },
     movie: function(mov){
-        request(userChoice,function(err, response, body){
-
+        var reqUrl = "http://img.omdbapi.com/?apikey=40e9cece&t=" + mov;
+        request.get(reqUrl,function(err, response, body){
+            if(err){
+                console.log(err);
+            }
+            //console.log(response)
+            console.log(body);
         })
 
     },
@@ -115,8 +120,8 @@ inquirer.prompt({
                 message: "What movie do you want to lookup?",
                 name: "movie"
             }).then(function(choice){
-                console.log(choice.movie);
-                //callLookup.movie(choice.movie);
+                //console.log(choice.movie);
+                callLookup.movie(choice.movie);
             })
             break;
         case "Or, whatever?":
