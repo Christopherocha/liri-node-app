@@ -62,13 +62,22 @@ var callLookup = {
             })
     },
     movie: function(mov){
-        var reqUrl = "http://img.omdbapi.com/?apikey=40e9cece&t=" + mov;
+        var reqUrl = "http://omdbapi.com/?t=" + mov + "&apikey=40e9cece";
         request.get(reqUrl,function(err, response, body){
             if(err){
                 console.log(err);
             }
-            //console.log(response)
-            console.log(body);
+            var convert = JSON.parse(body);
+            console.log("==============================")
+            console.log("Movie Title: " + convert.Title);
+            console.log("Release Date: " + convert.Year);
+            console.log("Movie Title: " + convert.Title);
+            console.log("IMDB Rating: " + convert.Ratings[0].Value);
+            console.log("Country Where Produced: " + convert.Country);
+            console.log("language: " + convert.Language);
+            console.log("Movie Plot: " + convert.Plot);
+            console.log("Actors: " + convert.Actors);    
+            console.log("Rotten Tomatoes URL: " + convert.Language);   
         })
 
     },
@@ -121,7 +130,12 @@ inquirer.prompt({
                 name: "movie"
             }).then(function(choice){
                 //console.log(choice.movie);
-                callLookup.movie(choice.movie);
+                //;
+                if(choice.movie === ""){
+                    callLookup.movie("Mr Nobody")
+                } else {
+                    callLookup.movie(choice.movie);
+                }
             })
             break;
         case "Or, whatever?":
