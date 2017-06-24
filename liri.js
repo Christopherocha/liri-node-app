@@ -77,7 +77,7 @@ var callLookup = {
             console.log("language: " + convert.Language);
             console.log("Movie Plot: " + convert.Plot);
             console.log("Actors: " + convert.Actors);    
-            console.log("Rotten Tomatoes URL: " + convert.Language);   
+            console.log("Rotten Tomatoes URL: https://www.rottentomatoes.com/m/" + convert.Language);   
         })
 
     },
@@ -146,3 +146,4 @@ inquirer.prompt({
     }
 })
 
+var re = /!@#$%^&*()/g;
