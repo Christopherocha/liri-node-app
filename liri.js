@@ -77,7 +77,7 @@ var callLookup = {
             console.log("language: " + convert.Language);
             console.log("Movie Plot: " + convert.Plot);
             console.log("Actors: " + convert.Actors);    
-            console.log("Rotten Tomatoes URL: https://www.rottentomatoes.com/m/" + convert.Language);   
+            console.log("Rotten Tomatoes URL: https://www.rottentomatoes.com/m/" + convert.Title.replace(" ", "_"));   
         })
 
     },
@@ -110,6 +110,11 @@ inquirer.prompt({
 }).then(function(user){
     switch(user.choice){
         case "Retrieve your tweets?":
+            fs.appendFile("log.txt", "\nmy-tweets", 'utf8', function(err){
+                if(err){
+                    console.log(error)
+                }
+            })
             callLookup.tweet();
             break;
         case "See song information?":
@@ -120,6 +125,11 @@ inquirer.prompt({
             }).then(function(choice){
                 console.log("spotify-this-song \"" + choice.song + "\"")
                 console.log("Running lookup on \"" + choice.song + "\"");
+                fs.appendFile("log.txt", "\nspotify-this-song " + choice.song, 'utf8', function(err){
+                if(err){
+                    console.log(error)
+                }
+            })
                 callLookup.spotifyCall(choice.song);
             })
             break;
@@ -132,8 +142,18 @@ inquirer.prompt({
                 //console.log(choice.movie);
                 //;
                 if(choice.movie === ""){
+                    fs.appendFile("log.txt", "\nmovie-this Mr. Nobody", 'utf8', function(err){
+                        if(error){
+                            console.log(err)
+                        }
+                    })
                     callLookup.movie("Mr Nobody")
                 } else {
+                    fs.appendFile("log.txt", "\nmovie-this " + choice.movie, 'utf8', function(err){
+                        if(error){
+                            console.log(err)
+                        }
+                    })
                     callLookup.movie(choice.movie);
                 }
             })
@@ -146,4 +166,3 @@ inquirer.prompt({
     }
 })
 
-var re = /!@#$%^&*()/g;
