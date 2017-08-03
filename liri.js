@@ -150,7 +150,7 @@ inquirer.prompt({
                     callLookup.movie("Mr Nobody")
                 } else {
                     fs.appendFile("log.txt", "\nmovie-this " + choice.movie, 'utf8', function(err){
-                        if(error){
+                        if(err){
                             console.log(err)
                         }
                     })
